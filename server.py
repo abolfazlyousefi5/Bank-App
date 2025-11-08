@@ -7,7 +7,6 @@ PORT = 8000
 
 class BankHandler(SimpleHTTPRequestHandler):
     def translate_path(self, path):
-        # serve کردن تمام فایل‌ها از public/
         root = os.path.join(os.getcwd(), "public")
         path = path.lstrip("/")
         return os.path.join(root, path)
@@ -15,14 +14,14 @@ class BankHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/":
             self.path = "/index.html"
-        elif self.path in ["/index.html", "/create_account.html", "/login.html"]:
-            pass
+
+        file_path = self.translate_path(self.path)
+        if os.path.exists(file_path):
+            return super().do_GET()
         else:
             self.send_response(404)
             self.end_headers()
             self.wfile.write(b"404 Not Found")
-            return
-        return super().do_GET()
 
     def do_POST(self):
         length = int(self.headers['Content-Length'])

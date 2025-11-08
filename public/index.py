@@ -20,7 +20,7 @@ if action == "create":
         print(f"<h1>✅ Account created successfully for {username}</h1>")
     else:
         print(f"<h1>❌ Failed to create account. Username may exist.</h1>")
-    print('<a href="../app/views/index.html">Back to Home</a>')
+    print('<a href="../app/public/index.html">Back to Home</a>')
 
 # اگر فرم ورود فرستاده شده
 elif action == "login":
@@ -33,8 +33,8 @@ elif action == "login":
         print(f"<p>💰 Your Balance: {balance}</p>")
     else:
         print("<h1>❌ Invalid login credentials!</h1>")
-    print('<a href="../app/views/index.html">Back to Home</a>')
+    print('<a href="../app/public/index.html">Back to Home</a>')
 
 # اگر صفحه بدون فرم باز شد
 else:
-    print('<meta http-equiv="refresh" content="0; URL=../app/views/index.html">')
+    print('<meta http-equiv="refresh" content="0; URL=../app/public/index.html">')
