@@ -1,0 +1,305 @@
+/* ------------------------------
+   Reset اولیه مرورگر
+--------------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* ------------------------------
+     پس‌زمینه و رنگ کلی سایت
+  --------------------------------*/
+  body {
+    background: #1b2a49; /* سرمه‌ای تیره */
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* ------------------------------
+     Navbar
+  --------------------------------*/
+  .navbar {
+    width: 100%;
+    background: #16203a; /* سرمه‌ای تیره‌تر */
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f0c330; /* طلایی */
+    text-decoration: none;
+  }
+  
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+  }
+  
+  .navbar ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+  }
+  
+  .navbar ul li a:hover {
+    color: #f0c330; /* طلایی */
+  }
+  
+  /* ------------------------------
+     Hero Section
+  --------------------------------*/
+  .hero {
+    background: linear-gradient(135deg, #1b2a49, #22325f);
+    color: #ffffff;
+    padding: 80px 50px;
+    text-align: center;
+    border-radius: 0 0 40px 40px;
+    margin-bottom: 40px;
+  }
+  
+  .hero-content h1 {
+    font-size: 44px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #ffffff;
+  }
+  
+  .hero-content p {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #d0d0d0;
+    max-width: 800px;
+    margin: 10px auto;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  
+  .hero-buttons a {
+    display: inline-block;
+    margin: 0 10px;
+    padding: 16px 30px;
+    font-size: 16px;
+    border-radius: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: #1b2a49;
+    background: #f0c330;
+  }
+  
+  .hero-buttons a:hover {
+    background: #ffffff;
+    color: #1b2a49;
+    transform: translateY(-3px);
+  }
+  
+  /* ------------------------------
+     Services Section
+  --------------------------------*/
+  .services {
+    text-align: center;
+    padding: 50px 30px;
+  }
+  
+  .services h2 {
+    font-size: 32px;
+    margin-bottom: 40px;
+    color: #ffffff;
+  }
+  
+  .service-cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .service-cards .card {
+    background: #2a3b6b;
+    padding: 25px;
+    border-radius: 20px;
+    width: 280px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .service-cards .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  }
+  
+  .service-cards .card h3 {
+    margin-bottom: 15px;
+    font-size: 22px;
+  }
+  
+  .service-cards .card p {
+    font-size: 15px;
+    color: #d0d0d0;
+  }
+  
+  /* ------------------------------
+     فرم‌ها (Register & Login)
+  --------------------------------*/
+  .container {
+    background: #22325f;
+    padding: 50px 40px;
+    border-radius: 25px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px auto;
+  }
+  
+  .container h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .container p {
+    font-size: 16px;
+    color: #d0d0d0;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  form {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 30px;
+    border-radius: 20px;
+    background: #2a3b6b;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+  
+  form input {
+    flex: 1 1 45%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #4a5c8f;
+    background: #1f2b50;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  
+  form input::placeholder {
+    color: #cccccc;
+  }
+  
+  form input:focus {
+    border-color: #f0c330;
+    box-shadow: 0 0 10px rgba(240, 195, 48, 0.4);
+    outline: none;
+  }
+  
+  button,
+  .btn {
+    width: 100%;
+    padding: 16px 0;
+    border-radius: 18px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+  }
+  
+  button[type="submit"] {
+    background: linear-gradient(45deg, #f0c330, #ffffff);
+    color: #1b2a49;
+  }
+  
+  button[type="submit"]:hover {
+    background: linear-gradient(45deg, #ffffff, #f0c330);
+  }
+  
+  a.btn {
+    background: linear-gradient(45deg, #ffffff, #f0c330);
+    color: #1b2a49;
+    text-decoration: none;
+  }
+  
+  a.btn:hover {
+    background: linear-gradient(45deg, #f0c330, #ffffff);
+  }
+  
+  /* ------------------------------
+     کارت‌های اطلاعات تماس
+  --------------------------------*/
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .info-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #2a3b6b;
+    padding: 20px;
+    border-radius: 18px;
+    font-size: 18px;
+    color: #ffffff;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .info-card i {
+    font-size: 24px;
+    color: #f0c330;
+  }
+  
+  .info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  }
+  
+  .info-card span {
+    font-weight: 500;
+  }
+  
+  /* ------------------------------
+     Responsive
+  --------------------------------*/
+  @media (max-width: 768px) {
+    form input {
+      flex: 1 1 100%;
+    }
+    .navbar {
+      flex-direction: column;
+      padding: 10px 20px;
+    }
+    .navbar ul {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .service-cards {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
