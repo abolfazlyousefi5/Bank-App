@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <!-- لینک صحیح CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- فونت Poppins از گوگل -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">BankLogo</a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="create_account.html">Register</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- داشبورد اصلی -->
+  <div class="dashboard-container">
+    <div class="welcome">
+      <h1 id="welcomeText">Welcome!</h1>
+      <p id="dashboardInfo">Here you can manage your demo banking account.</p>
+    </div>
+
+    <div class="account-card" id="accountCard">
+      <h2>Account Info</h2>
+      <p><strong>Username:</strong> <span id="username"></span></p>
+      <p><strong>Full Name:</strong> <span id="fullname"></span></p>
+      <p><strong>Balance:</strong> $<span id="balance"></span></p>
+    </div>
+  </div>
+
+  <script>
+    // اطلاعات کاربر از localStorage
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      document.getElementById("welcomeText").textContent = `Welcome, ${user.first_name}!`;
+      document.getElementById("username").textContent = user.username;
+      document.getElementById("fullname").textContent = `${user.first_name} ${user.last_name}`;
+      document.getElementById("balance").textContent = user.balance.toFixed(2);
+    } else {
+      window.location.href = "/login.html"; // اگر وارد نشده باشه، برگرد به login
+    }
+  </script>
+
+</body>
+
+</html>
