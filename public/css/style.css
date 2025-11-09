@@ -5,7 +5,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Poppins",  sans-serif;
 }
 
 /* ------------------------------
@@ -17,6 +17,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: "Poppins",  sans-serif;
+
 }
 
 /* ------------------------------
@@ -218,7 +220,7 @@ button,
   padding: 16px 0;
   border-radius: 18px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -226,22 +228,25 @@ button,
 }
 
 button[type="submit"] {
-  background: linear-gradient(45deg, #f0c330, #ffffff);
-  color: #1b2a49;
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  color: #ffff;
+  border: 1px;
+  font-weight: 700;
+
 }
 
 button[type="submit"]:hover {
-  background: linear-gradient(45deg, #ffffff, #f0c330);
+  background: linear-gradient(135deg, #303f9f, #3949ab);
 }
 
 a.btn {
-  background: linear-gradient(45deg, #ffffff, #f0c330);
-  color: #1b2a49;
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  color: #fff;
   text-decoration: none;
 }
 
 a.btn:hover {
-  background: linear-gradient(45deg, #f0c330, #ffffff);
+  background: linear-gradient(135deg, #303f9f, #3949ab);
 }
 
 /* ------------------------------
@@ -361,6 +366,87 @@ button {
     text-align: center;
   }
 }
+
+/* ===== Transfer Box Styles ===== */
+.transfer-box {
+  background: #22325f;
+  border-radius: 16px;
+  padding: 25px 30px;
+  width: 400px;
+  margin: 40px auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.transfer-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.transfer-box h2 {
+  color: #ffffff;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
+
+.transfer-box input {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 1px solid #4a5c8f;
+  background: #1f2b50;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: #fff;
+}
+
+.transfer-box input:focus {
+  border-color: #f0c330;
+  box-shadow: 0 0 6px rgba(63, 81, 181, 0.3);
+}
+
+#transferBtn {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#transferBtn:hover {
+  background: linear-gradient(135deg, #303f9f, #3949ab);
+  transform: translateY(-2px);
+}
+
+#transferMsg {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* اگر پیام موفقیت یا خطا داشتی */
+#transferMsg.success {
+  color: #2e7d32;
+}
+
+#transferMsg.error {
+  color: #c62828;
+}
+
+
 
 /* ------------------------------
      Responsive

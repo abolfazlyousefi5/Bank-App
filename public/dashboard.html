@@ -39,8 +39,15 @@
     </div>
   </div>
 
+  <div class="transfer-box">
+    <h2>Transfer Money</h2>
+    <input type="text" id="receiver" placeholder="Receiver Username">
+    <input type="number" id="amount" placeholder="Amount">
+    <button id="transferBtn">Send Money</button>
+    <p id="transferMsg"></p>
+  </div>
+
   <script>
-    // اطلاعات کاربر از localStorage
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       document.getElementById("welcomeText").textContent = `Welcome, ${user.first_name}!`;
@@ -48,9 +55,44 @@
       document.getElementById("fullname").textContent = `${user.first_name} ${user.last_name}`;
       document.getElementById("balance").textContent = user.balance.toFixed(2);
     } else {
-      window.location.href = "/login.html"; // اگر وارد نشده باشه، برگرد به login
+      window.location.href = "/login.html";
     }
-  </script>
+    
+    document.getElementById("transferBtn").addEventListener("click", async () => {
+      const receiver = document.getElementById("receiver").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const msg = document.getElementById("transferMsg");
+    
+      if (!receiver || isNaN(amount) || amount <= 0) {
+        msg.textContent = "Please enter valid data!";
+        msg.style.color = "red";
+        return;
+      }
+    
+      try {
+        const res = await fetch("/transfer", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ sender: user.username, receiver, amount })
+        });
+    
+        const data = await res.json();
+        msg.textContent = data.message;
+        msg.style.color = data.success ? "green" : "red";
+    
+        if(data.success){
+          user.balance -= amount;
+          localStorage.setItem("user", JSON.stringify(user));
+          document.getElementById("balance").textContent = user.balance.toFixed(2);
+        }
+    
+      } catch(e){
+        msg.textContent = "Server error!";
+        msg.style.color = "red";
+      }
+    });
+    </script>
+    
 
 </body>
 
