@@ -47,6 +47,12 @@
     <p id="transferMsg"></p>
   </div>
 
+  <div class="transaction-history">
+    <h2>Transaction History</h2>
+    <table id="transactionTable"></table>
+  </div>
+  
+
   <script>
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -58,6 +64,7 @@
       window.location.href = "/login.html";
     }
     
+    // انتقال پول
     document.getElementById("transferBtn").addEventListener("click", async () => {
       const receiver = document.getElementById("receiver").value.trim();
       const amount = parseFloat(document.getElementById("amount").value);
@@ -84,6 +91,7 @@
           user.balance -= amount;
           localStorage.setItem("user", JSON.stringify(user));
           document.getElementById("balance").textContent = user.balance.toFixed(2);
+          loadTransactions(); // بروزرسانی جدول تراکنش‌ها بعد از انتقال
         }
     
       } catch(e){
@@ -91,9 +99,47 @@
         msg.style.color = "red";
       }
     });
+    
+    // لود تاریخچه تراکنش‌ها
+    async function loadTransactions() {
+      if (!user) return;
+    
+      try {
+        const res = await fetch("/transactions", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ username: user.username })
+        });
+    
+        const transactions = await res.json();
+    
+        const table = document.getElementById("transactionTable");
+        table.innerHTML = `<tr>
+          <th>Date</th>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Amount</th>
+        </tr>`;
+    
+        transactions.forEach(t => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${t.date}</td>
+            <td>${t.sender}</td>
+            <td>${t.receiver}</td>
+            <td>$${parseFloat(t.amount).toFixed(2)}</td>
+          `;
+          table.appendChild(row);
+        });
+      } catch(e){
+        console.error("Failed to load transactions", e);
+      }
+    }
+    
+    // لود اولیه
+    loadTransactions();
     </script>
     
-
 </body>
 
 </html>

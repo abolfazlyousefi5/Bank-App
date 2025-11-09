@@ -2,7 +2,7 @@ import os
 import json
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import parse_qs
-from app.models.AccountModel import create_user, login_user, transfer_money
+from app.models.AccountModel import create_user, login_user, transfer_money, get_transactions
 
 PORT = 8000
 
@@ -43,6 +43,8 @@ class BankHandler(SimpleHTTPRequestHandler):
             self.handle_login(data)
         elif self.path == "/transfer":
             self.handle_transfer(data)
+        elif self.path == "/transactions":
+            self.handle_transactions(data)  # ← اضافه شد
         else:
             self.send_response(404)
             self.end_headers()
@@ -109,6 +111,20 @@ class BankHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(json.dumps(result).encode("utf-8"))
+
+    # ✅ تاریخچه تراکنش‌ها
+# فقط بخش اضافه شده handle_transactions رو اضافه کن
+    def handle_transactions(self, data):
+        username = data.get("username")
+        if isinstance(username, list):
+            username = username[0]
+        from app.models.AccountModel import get_transactions
+        transactions = get_transactions(username)
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps(transactions, default=str).encode("utf-8"))
 
 
 # ✅ اجرای سرور

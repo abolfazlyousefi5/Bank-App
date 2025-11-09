@@ -28,12 +28,11 @@ def login_user(username, password):
     conn.close()
     return user
 
-# ✅ انتقال پول بین کاربران با Decimal
+# ✅ انتقال پول بین کاربران با Decimal و ثبت تراکنش
 def transfer_money(sender_username, receiver_username, amount):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        # گرفتن اطلاعات کاربران
         cursor.execute("SELECT * FROM users WHERE username=%s", (sender_username,))
         sender = cursor.fetchone()
         cursor.execute("SELECT * FROM users WHERE username=%s", (receiver_username,))
@@ -42,7 +41,6 @@ def transfer_money(sender_username, receiver_username, amount):
         if not sender or not receiver:
             return {"success": False, "message": "User not found"}
 
-        # تبدیل موجودی‌ها و مبلغ به Decimal
         sender_balance = Decimal(sender["balance"])
         receiver_balance = Decimal(receiver["balance"])
         amount = Decimal(str(amount))
@@ -50,12 +48,19 @@ def transfer_money(sender_username, receiver_username, amount):
         if sender_balance < amount:
             return {"success": False, "message": "Insufficient funds"}
 
-        # بروزرسانی موجودی
+        # بروزرسانی موجودی‌ها
         new_sender_balance = sender_balance - amount
         new_receiver_balance = receiver_balance + amount
 
         cursor.execute("UPDATE users SET balance=%s WHERE username=%s", (new_sender_balance, sender_username))
         cursor.execute("UPDATE users SET balance=%s WHERE username=%s", (new_receiver_balance, receiver_username))
+
+        # ثبت تراکنش
+        cursor.execute(
+            "INSERT INTO transactions (sender, receiver, amount) VALUES (%s, %s, %s)",
+            (sender_username, receiver_username, float(amount))
+        )
+
         conn.commit()
 
         return {"success": True, "message": f"Transferred ${float(amount):.2f} to {receiver_username} successfully!"}
@@ -63,6 +68,23 @@ def transfer_money(sender_username, receiver_username, amount):
     except Exception as e:
         conn.rollback()
         return {"success": False, "message": str(e)}
+    finally:
+        cursor.close()
+        conn.close()
+
+# ✅ گرفتن تاریخچه تراکنش‌ها
+def get_transactions(username):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            "SELECT * FROM transactions WHERE sender=%s OR receiver=%s ORDER BY date DESC",
+            (username, username)
+        )
+        transactions = cursor.fetchall()
+        return transactions
+    except Exception as e:
+        return []
     finally:
         cursor.close()
         conn.close()
