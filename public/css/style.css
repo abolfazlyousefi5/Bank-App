@@ -312,6 +312,8 @@ button {
 .welcome {
   flex: 1;
   max-width: 600px;
+  margin-left: 33%;
+
 }
 
 .welcome h1 {
@@ -335,8 +337,11 @@ button {
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   color: #ffffff;
-  text-align: right; /* سمت راست */
+  text-align: left; /* سمت راست */
+  margin-right: 100%;
+  margin-top: 100px;
 }
+
 
 .account-card h2 {
   font-size: 22px;
