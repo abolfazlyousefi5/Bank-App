@@ -27,28 +27,29 @@
   <!-- داشبورد اصلی -->
   <div class="dashboard-container">
     <div class="welcome">
-      <h1 id="welcomeText">Welcome!</h1>
+      <h1 id="welcomeText">Welcome, Abolfazl!</h1>
       <p id="dashboardInfo">Here you can manage your demo banking account.</p>
     </div>
-
+  
     <div class="account-card" id="accountCard">
       <h2>Account Info</h2>
       <p><strong>Username:</strong> <span id="username"></span></p>
       <p><strong>Full Name:</strong> <span id="fullname"></span></p>
       <p><strong>Balance:</strong> $<span id="balance"></span></p>
     </div>
+  
+    <div class="transfer-box">
+      <h2>Transfer Money</h2>
+      <input type="text" id="receiver" placeholder="Receiver Username">
+      <input type="number" id="amount" placeholder="Amount">
+      <button id="transferBtn">Send Money</button>
+      <p id="transferMsg"></p>
+    </div>
   </div>
-
-  <div class="transfer-box">
-    <h2>Transfer Money</h2>
-    <input type="text" id="receiver" placeholder="Receiver Username">
-    <input type="number" id="amount" placeholder="Amount">
-    <button id="transferBtn">Send Money</button>
-    <p id="transferMsg"></p>
-  </div>
+  
 
   <div class="transaction-history">
-    <h2>Transaction History</h2>
+    <h2 style="text-align: center; margin-bottom: 20px;">Transaction History</h2>
     <table id="transactionTable"></table>
   </div>
   

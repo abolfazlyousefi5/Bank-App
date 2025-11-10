@@ -299,26 +299,27 @@ button {
 }
 
 /* کانتینر داشبورد */
+/* ===== Layout Container ===== */
 .dashboard-container {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 50px;
-  gap: 30px;
   flex-wrap: wrap;
+  justify-content: center; /* برای مرکز کردن بخش‌ها */
+  align-items: flex-start;
+  gap: 40px;
+  padding: 50px 20px;
+  box-sizing: border-box;
 }
 
 /* خوش آمدگویی */
 .welcome {
-  flex: 1;
-  max-width: 600px;
-  margin-left: 33%;
-
+  width: 100%;
+  text-align: center; /* وسط‌چین دقیق */
+  margin-bottom: 30px;
 }
 
 .welcome h1 {
   font-size: 36px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   color: #ffffff;
   font-weight: 700;
 }
@@ -331,17 +332,15 @@ button {
 
 /* کارت حساب */
 .account-card {
-  flex: 0 0 300px;
+  flex: 0 0 320px;
   background: #2a3b6b;
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   color: #ffffff;
-  text-align: left; /* سمت راست */
-  margin-right: 100%;
-  margin-top: 100px;
+  text-align: left;
+  margin: 0; /* حذف margin-right و margin-top */
 }
-
 
 .account-card h2 {
   font-size: 22px;
@@ -357,32 +356,20 @@ button {
 
 .account-card span {
   font-weight: 600;
-  color: #f0c330; /* طلایی */
-}
-
-/* responsive */
-@media (max-width: 768px) {
-  .dashboard-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .account-card {
-    text-align: center;
-  }
+  color: #f0c330;
 }
 
 /* ===== Transfer Box Styles ===== */
 .transfer-box {
+  flex: 0 0 400px;
   background: #22325f;
   border-radius: 16px;
   padding: 25px 30px;
-  width: 400px;
-  margin: 40px auto;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   font-family: "Poppins", sans-serif;
   text-align: center;
   transition: all 0.3s ease;
+  margin: 0;
 }
 
 .transfer-box:hover {
@@ -442,13 +429,26 @@ button {
   font-weight: 500;
 }
 
-/* اگر پیام موفقیت یا خطا داشتی */
 #transferMsg.success {
   color: #2e7d32;
 }
 
 #transferMsg.error {
   color: #c62828;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .dashboard-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .account-card,
+  .transfer-box {
+    width: 90%;
+    max-width: 400px;
+  }
 }
 
 
