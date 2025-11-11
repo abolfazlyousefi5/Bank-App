@@ -2,64 +2,58 @@
 # -*- coding: utf-8 -*-
 
 import cgi
-import cgitb
-cgitb.enable()  # برای نمایش خطاها در مرورگر (خیلی مفید برای دیباگ)
-
+import json
 from app.controllers.AccountController import AccountController
-from app.models.AccountModel import create_user, login_user
 
-print("Content-type: text/html\n")  # برای خروجی HTML به مرورگر
+print("Content-Type: application/json\n")  # خروجی JSON برای تعامل با فرانت‌اند
 
-form = cgi.FieldStorage()  # گرفتن اطلاعات فرم
+controller = AccountController()
+form = cgi.FieldStorage()
 
-action = form.getvalue("action")  # تشخیص نوع درخواست (create یا login)
+action = form.getvalue("action")
 
-# ✅ اگر کاربر می‌خواهد اکانت جدید بسازد
-if action == "create":
-    first_name = form.getvalue("first_name")
-    last_name = form.getvalue("last_name")
-    phone = form.getvalue("phone")
-    address = form.getvalue("address")
-    postal_code = form.getvalue("postal_code")
-    pin = form.getvalue("pin")
+# پاسخ نهایی
+response = {"status": "error", "message": "Invalid action"}
 
-    # اعتبارسنجی اولیه
-    if not pin or len(pin) != 4 or not pin.isdigit():
-        print("<h1 style='color:red;'>❌ PIN must be exactly 4 digits!</h1>")
-        print('<a href="../create_account.html">Back</a>')
-    else:
-        success, message, card_number = create_user(
-            first_name, last_name, phone, address, postal_code, pin
-        )
-        if success:
-            print("<h1 style='color:green;'>✅ Account Created Successfully!</h1>")
-            print(f"<p>{message}</p>")
-            print(f"<p>Your card number: <strong>{card_number}</strong></p>")
-            print("<p>Keep it safe and use your PIN to log in.</p>")
-            print('<a href="../login.html">Go to Login</a>')
+try:
+    if action == "create":
+        username = form.getvalue("username")
+        password = form.getvalue("password")
+
+        if controller.create_account(username, password):
+            response = {"status": "success", "message": "Account created successfully!"}
         else:
-            print(f"<h1 style='color:red;'>❌ {message}</h1>")
-            print('<a href="../create_account.html">Back</a>')
+            response = {"status": "error", "message": "Username already exists!"}
 
-# ✅ اگر کاربر می‌خواهد لاگین کند
-elif action == "login":
-    card_number = form.getvalue("card_number")
-    pin = form.getvalue("pin")
+    elif action == "login":
+        username = form.getvalue("username")
+        password = form.getvalue("password")
 
-    if not card_number or not pin:
-        print("<h1 style='color:red;'>❌ Please enter both card number and PIN!</h1>")
-        print('<a href="../login.html">Back</a>')
-    else:
-        user = login_user(card_number, pin)
+        user = controller.login(username, password)
         if user:
-            print(f"<h1 style='color:green;'>✅ Welcome, {user['first_name']} {user['last_name']}!</h1>")
-            print(f"<p>💳 Card Number: {user['card_number']}</p>")
-            print(f"<p>💰 Balance: ${user['balance']:.2f}</p>")
-            print('<a href="../dashboard.html">Go to Dashboard</a>')
+            response = {
+                "status": "success",
+                "message": "Login successful!",
+                "user": user
+            }
         else:
-            print("<h1 style='color:red;'>❌ Invalid card number or PIN!</h1>")
-            print('<a href="../login.html">Back</a>')
+            response = {"status": "error", "message": "Invalid credentials!"}
 
-# ✅ اگر هیچ اکشنی مشخص نشده (باز شدن مستقیم فایل)
-else:
-    print('<meta http-equiv="refresh" content="0; URL=../index.html">')
+    elif action == "transfer":
+        from_user = form.getvalue("from_user")
+        to_user = form.getvalue("to_user")
+        amount = float(form.getvalue("amount"))
+
+        result = controller.transfer_money(from_user, to_user, amount)
+        response = result
+
+    elif action == "get_balance":
+        username = form.getvalue("username")
+        balance = controller.get_balance(username)
+        response = {"status": "success", "balance": balance}
+
+except Exception as e:
+    response = {"status": "error", "message": str(e)}
+
+# چاپ خروجی JSON
+print(json.dumps(response))
