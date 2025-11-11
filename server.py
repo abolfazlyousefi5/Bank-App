@@ -7,18 +7,14 @@ from app.models.AccountModel import create_user, login_user, transfer_money, get
 PORT = 8000
 
 class BankHandler(SimpleHTTPRequestHandler):
-
-    # مسیر فایل‌ها از public/
     def translate_path(self, path):
         root = os.path.join(os.getcwd(), "public")
         path = path.lstrip("/")
         return os.path.join(root, path)
 
-    # ✅ GET
     def do_GET(self):
         if self.path == "/":
             self.path = "/index.html"
-
         file_path = self.translate_path(self.path)
         if os.path.exists(file_path):
             return super().do_GET()
@@ -27,107 +23,131 @@ class BankHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b"404 Not Found")
 
-    # ✅ POST
     def do_POST(self):
-        length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(length).decode('utf-8')
+        length = int(self.headers.get('Content-Length', 0))
+        body = self.rfile.read(length).decode('utf-8') if length > 0 else ""
+        data = parse_qs(body)
 
-        if self.headers.get("Content-Type") == "application/json":
-            data = json.loads(post_data)
-        else:
-            data = parse_qs(post_data)
+        # helper برای خواندن داده از parse_qs
+        def getf(k):
+            v = data.get(k)
+            if isinstance(v, list):
+                return v[0]
+            return v
 
+        # ---------- REGISTER ----------
         if self.path == "/register":
-            self.handle_register(data)
-        elif self.path == "/login":
-            self.handle_login(data)
-        elif self.path == "/transfer":
-            self.handle_transfer(data)
-        elif self.path == "/transactions":
-            self.handle_transactions(data)  # ← اضافه شد
-        else:
-            self.send_response(404)
+            first_name = getf("first_name") or ""
+            last_name = getf("last_name") or ""
+            pin = getf("pin") or ""
+            phone = getf("phone") or ""
+            address = getf("address") or ""
+            postal_code = getf("postal_code") or ""
+
+            # validate pin
+            if not (isinstance(pin, str) and pin.isdigit() and len(pin) == 4):
+                success, message, card_number = False, "PIN must be a 4-digit number!", None
+            else:
+                success, message, card_number = create_user(first_name, last_name, phone, address, postal_code, pin)
+
+            self.send_response(200 if success else 400)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(b"404 Not Found")
+            if card_number:
+                html = f"""
+                <html>
+                <body>
+                    <h2>{message}</h2>
+                    <p><strong>Your Card Number:</strong> {card_number}</p>
+                    <p>Keep it safe. Use your card number and PIN to login.</p>
+                    <a href='/login.html'>Login</a>
+                </body>
+                </html>
+                """
+            else:
+                html = f"""
+                <html>
+                <body>
+                    <h2>{message}</h2>
+                    <a href='/create_account.html'>Back</a>
+                </body>
+                </html>
+                """
+            self.wfile.write(html.encode("utf-8"))
+            return
 
-    # ✅ ثبت نام
-    def handle_register(self, data):
-        first_name = data.get("first_name", [""])[0]
-        last_name = data.get("last_name", [""])[0]
-        phone = data.get("phone", [""])[0]
-        address = data.get("address", [""])[0]
-        postal_code = data.get("postal_code", [""])[0]
-        username = data.get("username", [""])[0]
-        password = data.get("password", [""])[0]
+        # ---------- LOGIN ----------
+        if self.path == "/login":
+            card_number = getf("card_number") or ""
+            pin = getf("pin") or ""
 
-        success, message = create_user(first_name, last_name, phone, address, postal_code, username, password)
+            if not card_number or not pin:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": False, "message": "Card number and PIN required."}).encode())
+                return
 
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html")
-        self.end_headers()
-        self.wfile.write(f"<html><body><h2>{message}</h2><a href='/index.html'>Back</a></body></html>".encode())
+            user = login_user(card_number, pin)
 
-    # ✅ ورود
-    def handle_login(self, data):
-        username = data.get("username", [""])[0]
-        password = data.get("password", [""])[0]
-        user = login_user(username, password)
-
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-
-        if user:
-            response = {
-                "success": True,
-                "user": {
-                    "id": user["id"],
-                    "first_name": user["first_name"],
-                    "last_name": user["last_name"],
-                    "username": user["username"],
-                    "balance": float(user["balance"])
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            if user:
+                response = {
+                    "success": True,
+                    "user": {
+                        "id": user["id"],
+                        "card_number": user.get("card_number") or "",
+                        "first_name": user.get("first_name", ""),
+                        "last_name": user.get("last_name", ""),
+                        "balance": float(user.get("balance", 0.0))
+                    }
                 }
-            }
-        else:
-            response = {"success": False, "message": "Invalid username or password!"}
+            else:
+                response = {"success": False, "message": "Invalid card number or PIN."}
+            self.wfile.write(json.dumps(response).encode("utf-8"))
+            return
 
-        self.wfile.write(json.dumps(response).encode("utf-8"))
+        # ---------- TRANSFER ----------
+        if self.path == "/transfer":
+            sender = getf("sender") or ""
+            receiver = getf("receiver") or ""
+            amt = getf("amount") or "0"
+            try:
+                amount = float(str(amt).strip())
+            except:
+                amount = 0.0
 
-    # ✅ انتقال پول
-    def handle_transfer(self, data):
-        sender = data.get("sender")
-        receiver = data.get("receiver")
-        try:
-            amount = float(data.get("amount", 0))
-        except:
-            amount = 0
 
-        if amount <= 0:
-            result = {"success": False, "message": "Amount must be greater than zero!"}
-        else:
-            result = transfer_money(sender, receiver, amount)
+            if amount <= 0:
+                result = {"success": False, "message": "Amount must be greater than zero!"}
+            else:
+                result = transfer_money(sender, receiver, amount)
 
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(result).encode("utf-8"))
+            return
+
+        # ---------- TRANSACTIONS ----------
+        if self.path == "/transactions":
+            card = getf("card_number") or ""
+            transactions = get_transactions(card)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(transactions, default=str).encode("utf-8"))
+            return
+
+        # unknown
+        self.send_response(404)
         self.end_headers()
-        self.wfile.write(json.dumps(result).encode("utf-8"))
-
-    # ✅ تاریخچه تراکنش‌ها
-# فقط بخش اضافه شده handle_transactions رو اضافه کن
-    def handle_transactions(self, data):
-        username = data.get("username")
-        if isinstance(username, list):
-            username = username[0]
-        from app.models.AccountModel import get_transactions
-        transactions = get_transactions(username)
-
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-        self.wfile.write(json.dumps(transactions, default=str).encode("utf-8"))
+        self.wfile.write(b"404 Not Found")
 
 
-# ✅ اجرای سرور
-httpd = HTTPServer(("localhost", PORT), BankHandler)
-print(f"Server running at http://localhost:{PORT}")
-httpd.serve_forever()
+if __name__ == "__main__":
+    httpd = HTTPServer(("localhost", PORT), BankHandler)
+    print(f"Server running at http://localhost:{PORT}")
+    httpd.serve_forever()

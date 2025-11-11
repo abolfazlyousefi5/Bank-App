@@ -7,37 +7,65 @@
 </head>
 <body>
 
-  <!-- Navbar حرفه‌ای -->
+  <!-- Navbar -->
   <nav class="navbar">
     <a href="index.html" class="logo">BankLogo</a>
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="create_account.html">Register</a></li>
       <li><a href="login.html">Login</a></li>
-      <li><a href="About.html">About</a></li>
-      <li><a href="Contact.html">Contact</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
     </ul>
   </nav>
 
-  <!-- کارت فرم -->
   <div class="container">
     <h1>Create Your Demo Account</h1>
-    <p>Fill in the details below to create a practice account. No real money involved.</p>
-    <form action="/register" method="post">
+    <p>Fill in details below. Server will generate a 16-digit card for you and show it after success.</p>
+
+    <form id="registerForm">
       <input name="first_name" placeholder="First Name" required>
       <input name="last_name" placeholder="Last Name" required>
-      <input name="username" placeholder="Username" required>
-      <input name="password" type="password" placeholder="Password" required>
+      <input name="pin" type="password" maxlength="4" pattern="\d{4}" placeholder="PIN (4 digits)" required>
       <input name="phone" placeholder="Phone" required>
       <input name="address" placeholder="Address" required>
       <input name="postal_code" placeholder="Postal Code" required>
-      <button type="submit">Register</button>
-  </form>
-  
-  
+      <button type="submit">Create Account</button>
     </form>
+
+    <p id="resultMessage" style="margin-top:12px;"></p>
+
     <a href="index.html" class="btn">Back to Home</a>
   </div>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const resultMsg = document.getElementById("resultMessage");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault(); // جلوگیری از رفرش صفحه
+
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      for (const pair of formData) {
+        params.append(pair[0], pair[1]);
+      }
+
+      try {
+        const res = await fetch("/register", {
+          method: "POST",
+          body: params
+        });
+
+        const text = await res.text(); // سرور HTML برمی‌گرداند
+        resultMsg.innerHTML = text; // نمایش پیام موفقیت یا خطا
+
+      } catch(err) {
+        console.error(err);
+        resultMsg.innerHTML = "<span style='color:red;'>Server error! Try again.</span>";
+      }
+    });
+  </script>
 
 </body>
 </html>

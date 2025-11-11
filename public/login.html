@@ -9,62 +9,79 @@
 
 <body>
 
-  <!-- Navbar حرفه‌ای -->
+  <!-- Navbar -->
   <nav class="navbar">
     <a href="index.html" class="logo">BankLogo</a>
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="create_account.html">Register</a></li>
       <li><a href="login.html">Login</a></li>
-      <li><a href="About.html">About</a></li>
-      <li><a href="Contact.html">Contact</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
     </ul>
   </nav>
 
-  <!-- کارت فرم -->
   <div class="container">
-    <h1>Login to Demo Account</h1>
-    <p>Enter your credentials to access your practice banking account.</p>
+    <h1>Login to Your Demo Account</h1>
     <form id="loginForm">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <input type="text" name="card_number" placeholder="Card Number" required>
+      <input type="password" name="pin" placeholder="PIN (4 digits)" required>
       <button type="submit">Login</button>
     </form>
 
-    <script>
-      document.getElementById("loginForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const params = new URLSearchParams(formData);
-
-        try {
-          const res = await fetch("/login", {
-            method: "POST",
-            body: params
-          });
-
-          const data = await res.json(); // ⬅️ اینجا JSON می‌خونیم
-
-          if (data.success) {
-            localStorage.setItem("user", JSON.stringify(data.user));
-            window.location.href = "/dashboard.html";
-          } else {
-            alert(data.message);
-          }
-
-        } catch (err) {
-          alert("Login failed. Check server console.");
-          console.error(err);
-        }
-      });
-    </script>
-
-
+    <p id="loginMessage" style="margin-top:12px;"></p>
 
     <a href="index.html" class="btn">Back to Home</a>
   </div>
 
-</body>
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
 
+    loginForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(loginForm);
+      const params = new URLSearchParams();
+      for (const pair of formData) {
+        params.append(pair[0], pair[1]);
+      }
+
+      try {
+        const res = await fetch("/login", {
+          method: "POST",
+          body: params
+        });
+
+        if (!res.ok) {
+          loginMessage.innerHTML = "<span style='color:red;'>Login failed! Server returned an error.</span>";
+          return;
+        }
+
+        const data = await res.json();
+
+        if (data.success) {
+          // ذخیره اطلاعات کامل کاربر در localStorage
+          localStorage.setItem("user", JSON.stringify({
+            id: data.user.id,
+            first_name: data.user.first_name,
+            last_name: data.user.last_name,
+            card_number: data.user.card_number,
+            balance: data.user.balance
+          }));
+
+          loginMessage.innerHTML = `<span style='color:green;'>Welcome ${data.user.first_name} ${data.user.last_name}!<br>Your balance: $${data.user.balance.toFixed(2)}</span>`;
+          setTimeout(() => { window.location.href = "/dashboard.html"; }, 1500);
+        } else {
+          loginMessage.innerHTML = `<span style='color:red;'>${data.message}</span>`;
+        }
+
+      } catch (err) {
+        console.error(err);
+        loginMessage.innerHTML = "<span style='color:red;'>Server error! Check console.</span>";
+      }
+    });
+  </script>
+
+</body>
 </html>

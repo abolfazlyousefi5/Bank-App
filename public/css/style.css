@@ -303,7 +303,7 @@ button {
 .dashboard-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* برای مرکز کردن بخش‌ها */
+  justify-content: center;
   align-items: flex-start;
   gap: 40px;
   padding: 50px 20px;
@@ -313,7 +313,7 @@ button {
 /* خوش آمدگویی */
 .welcome {
   width: 100%;
-  text-align: center; /* وسط‌چین دقیق */
+  text-align: center;
   margin-bottom: 30px;
 }
 
@@ -339,7 +339,7 @@ button {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   color: #ffffff;
   text-align: left;
-  margin: 0; /* حذف margin-right و margin-top */
+  margin: 0;
 }
 
 .account-card h2 {
@@ -437,6 +437,42 @@ button {
   color: #c62828;
 }
 
+/* جدول تاریخچه تراکنش‌ها */
+.transaction-history {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.transaction-history h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.transaction-history table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1f2b50;
+  border-radius: 10px;
+  overflow: hidden;
+  color: #fff;
+}
+
+.transaction-history table th,
+.transaction-history table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.transaction-history table th {
+  background: #2a3b6b;
+}
+
+.transaction-history table tr:nth-child(even) {
+  background: #22325f;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .dashboard-container {
@@ -449,8 +485,12 @@ button {
     width: 90%;
     max-width: 400px;
   }
-}
 
+  .transaction-history table th,
+  .transaction-history table td {
+    font-size: 0.9rem;
+  }
+}
 
 
 
