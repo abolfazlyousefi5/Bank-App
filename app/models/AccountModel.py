@@ -22,7 +22,7 @@ def generate_card_number_with_prefix(cursor, prefix="58598311"):
             return candidate
         # در صورت تصادف (خیلی نادر) دوباره تلاش می‌کنیم
 
-def create_user(first_name, last_name, phone, address, postal_code, pin):
+def create_user(first_name, last_name, phone, address, id_card, pin):
     """
     ایجاد کاربر جدید:
     - کاربر خودش PIN را وارد می‌کند.
@@ -55,9 +55,9 @@ def create_user(first_name, last_name, phone, address, postal_code, pin):
         # درج کاربر جدید با balance صفر
         cursor.execute('''
             INSERT INTO users
-            (first_name, last_name, phone, address, postal_code, card_number, pin, balance)
+            (first_name, last_name, phone, address, id_card, card_number, pin, balance)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        ''', (first_name, last_name, phone, address, postal_code, card_number, pin, Decimal('0.00')))
+        ''', (first_name, last_name, phone, address, id_card, card_number, pin, Decimal('0.00')))
 
         conn.commit()
         return True, "Account created successfully.", card_number

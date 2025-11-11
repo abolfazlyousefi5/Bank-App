@@ -42,13 +42,13 @@ class BankHandler(SimpleHTTPRequestHandler):
             pin = getf("pin") or ""
             phone = getf("phone") or ""
             address = getf("address") or ""
-            postal_code = getf("postal_code") or ""
+            id_card = getf("id_card") or ""
 
             # validate pin
             if not (isinstance(pin, str) and pin.isdigit() and len(pin) == 4):
                 success, message, card_number = False, "PIN must be a 4-digit number!", None
             else:
-                success, message, card_number = create_user(first_name, last_name, phone, address, postal_code, pin)
+                success, message, card_number = create_user(first_name, last_name, phone, address, id_card, pin)
 
             self.send_response(200 if success else 400)
             self.send_header("Content-Type", "text/html; charset=utf-8")
