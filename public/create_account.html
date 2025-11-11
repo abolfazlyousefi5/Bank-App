@@ -27,9 +27,9 @@
       <input name="first_name" placeholder="First Name" required>
       <input name="last_name" placeholder="Last Name" required>
       <input name="pin" type="password" maxlength="4" pattern="\d{4}" placeholder="PIN (4 digits)" required>
-      <input name="phone" placeholder="Phone" required>
+      <input name="phone" type="tel" maxlength="11" placeholder="Phone (11 digits, 09********* )" required>
       <input name="address" placeholder="Address" required>
-      <input name="id_card" placeholder="ID Card" required>
+      <input name="id_card" type="tel" maxlength="10" placeholder="ID Card (10 digits)" required>
       <button type="submit">Create Account</button>
     </form>
 
@@ -43,13 +43,41 @@
     const resultMsg = document.getElementById("resultMessage");
 
     form.addEventListener("submit", async function(e) {
-      e.preventDefault(); // جلوگیری از رفرش صفحه
+      e.preventDefault();
 
       const formData = new FormData(form);
-      const params = new URLSearchParams();
-      for (const pair of formData) {
-        params.append(pair[0], pair[1]);
+      const first_name = formData.get("first_name").trim();
+      const last_name = formData.get("last_name").trim();
+      const pin = formData.get("pin").trim();
+      const phone = formData.get("phone").trim();
+      const address = formData.get("address").trim();
+      const id_card = formData.get("id_card").trim();
+
+      // validate PIN
+      if (!/^\d{4}$/.test(pin)) {
+        resultMsg.innerHTML = "<span style='color:red;'>PIN must be 4 digits!</span>";
+        return;
       }
+
+      // validate phone
+      if (!/^09\d{9}$/.test(phone)) {
+        resultMsg.innerHTML = "<span style='color:red;'>Phone must start with 09 and be 11 digits!</span>";
+        return;
+      }
+
+      // validate id_card
+      if (!/^\d{10}$/.test(id_card)) {
+        resultMsg.innerHTML = "<span style='color:red;'>ID Card must be 10 digits!</span>";
+        return;
+      }
+
+      const params = new URLSearchParams();
+      params.append("first_name", first_name);
+      params.append("last_name", last_name);
+      params.append("pin", pin);
+      params.append("phone", phone);
+      params.append("address", address);
+      params.append("id_card", id_card);
 
       try {
         const res = await fetch("/register", {
@@ -57,9 +85,8 @@
           body: params
         });
 
-        const text = await res.text(); // سرور HTML برمی‌گرداند
-        resultMsg.innerHTML = text; // نمایش پیام موفقیت یا خطا
-
+        const text = await res.text();
+        resultMsg.innerHTML = text;
       } catch(err) {
         console.error(err);
         resultMsg.innerHTML = "<span style='color:red;'>Server error! Try again.</span>";
