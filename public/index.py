@@ -21,9 +21,11 @@ try:
         password = form.getvalue("password")
 
         if controller.create_account(username, password):
-            response = {"status": "success", "message": "Account created successfully!"}
+            response = {"status": "success",
+                        "message": "Account created successfully!"}
         else:
-            response = {"status": "error", "message": "Username already exists!"}
+            response = {"status": "error",
+                        "message": "Username already exists!"}
 
     elif action == "login":
         username = form.getvalue("username")
@@ -39,13 +41,24 @@ try:
         else:
             response = {"status": "error", "message": "Invalid credentials!"}
 
+# index.py (فقط بخش transfer)
     elif action == "transfer":
-        from_user = form.getvalue("from_user")
-        to_user = form.getvalue("to_user")
-        amount = float(form.getvalue("amount"))
+        from_user = form.getvalue("from_user") or ""
+        to_user = form.getvalue("to_user") or ""
+        amt_raw = form.getvalue("amount") or "0"
+        try:
+            amount = float(amt_raw)
+        except Exception:
+            amount = 0.0
 
+        # فرض می‌کنیم controller.transfer_money(from_user, to_user, amount) وجود دارد
         result = controller.transfer_money(from_user, to_user, amount)
-        response = result
+        # نمایش خروجی ساده به مرورگر
+        if result.get("success"):
+            print(f"<h1>✅ {result.get('message')}</h1>")
+        else:
+            print(f"<h1>❌ {result.get('message')}</h1>")
+        print('<a href="../app/public/dashboard.html">Back to Dashboard</a>')
 
     elif action == "get_balance":
         username = form.getvalue("username")

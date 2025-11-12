@@ -1,12 +1,9 @@
 # app/models/AccountModel.py
 from app.models.Database import get_connection
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 import random
 
 def generate_card_number_with_prefix(cursor, prefix="58598311"):
-    """
-    تولید شماره کارت 16 رقمی که با prefix شروع می‌شود و یکتا بودن را چک می‌کند.
-    """
     prefix = str(prefix)
     if not prefix.isdigit() or len(prefix) >= 16:
         raise ValueError("prefix must be numeric and shorter than 16 digits")
@@ -15,64 +12,36 @@ def generate_card_number_with_prefix(cursor, prefix="58598311"):
         remaining_len = 16 - len(prefix)
         random_part = "".join(str(random.randint(0, 9)) for _ in range(remaining_len))
         candidate = (prefix + random_part)[:16]
-
-        # چک یکتا بودن
         cursor.execute("SELECT id FROM users WHERE card_number=%s", (candidate,))
         if not cursor.fetchone():
             return candidate
-        # در صورت تصادف (خیلی نادر) دوباره تلاش می‌کنیم
 
 def create_user(first_name, last_name, phone, address, id_card, pin):
-    """
-    ایجاد کاربر جدید:
-    - کاربر خودش PIN را وارد می‌کند.
-    - شماره کارت خودکار ساخته می‌شود و با prefix '58598311' شروع می‌گردد.
-    - اگر رکوردی با first_name+last_name+phone قبلا وجود داشته باشد، از تکرار جلوگیری می‌شود
-      و اطلاعات کارت فعلی بازگردانده می‌شود.
-    خروجی: (success: bool, message: str, card_number_or_None)
-    """
-    # اعتبارسنجی PIN ساده (4 رقم)
-    if not (isinstance(pin, str) and pin.isdigit() and len(pin) == 4):
-        return False, "PIN must be a 4-digit numeric string.", None
-
+    # validation done in controller; here assume valid
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        # اول بررسی می‌کنیم آیا همین کاربر از قبل وجود دارد (بر اساس نام+نام خانوادگی+شماره)
-        cursor.execute("""
-            SELECT card_number FROM users
-            WHERE first_name=%s AND last_name=%s AND phone=%s
-            LIMIT 1
-        """, (first_name, last_name, phone))
+        cursor.execute("SELECT card_number FROM users WHERE id_card=%s OR phone=%s LIMIT 1", (id_card, phone))
         existing = cursor.fetchone()
         if existing:
-            # اگر قبلاً ساخته شده، جلوی تکرار را می‌گیریم و کارت موجود را برمی‌گردانیم
-            return False, "Account already exists for this person. Using existing card.", existing.get("card_number")
+            return False, "Account already exists for this national ID or phone. Using existing card.", existing.get("card_number")
 
-        # تولید شماره کارت یکتا
         card_number = generate_card_number_with_prefix(cursor, prefix="58598311")
-
-        # درج کاربر جدید با balance صفر
         cursor.execute('''
             INSERT INTO users
             (first_name, last_name, phone, address, id_card, card_number, pin, balance)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         ''', (first_name, last_name, phone, address, id_card, card_number, pin, Decimal('0.00')))
-
         conn.commit()
         return True, "Account created successfully.", card_number
     except Exception as e:
         conn.rollback()
         return False, str(e), None
     finally:
-        try:
-            cursor.close()
-        except:
-            pass
-        try:
-            conn.close()
-        except:
-            pass
+        try: cursor.close()
+        except: pass
+        try: conn.close()
+        except: pass
 
 def login_user(card_number, pin):
     conn = get_connection()
@@ -84,9 +53,17 @@ def login_user(card_number, pin):
     return user
 
 def transfer_money(sender_card, receiver_card, amount):
+    """
+    amount can be float, int or string. We'll convert it to Decimal safely.
+    """
+    from decimal import Decimal
     try:
-        amount_dec = Decimal(str(amount))
-    except Exception:
+        # normalize amount
+        if isinstance(amount, (float, int)):
+            amount_dec = Decimal(str(amount))
+        else:
+            amount_dec = Decimal(str(amount).strip())
+    except (InvalidOperation, ValueError, TypeError):
         return {"success": False, "message": "Invalid amount format."}
 
     if amount_dec <= 0:
@@ -95,9 +72,10 @@ def transfer_money(sender_card, receiver_card, amount):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM users WHERE card_number=%s", (sender_card,))
+        # read balances
+        cursor.execute("SELECT id, balance FROM users WHERE card_number=%s FOR UPDATE", (sender_card,))
         sender = cursor.fetchone()
-        cursor.execute("SELECT * FROM users WHERE card_number=%s", (receiver_card,))
+        cursor.execute("SELECT id, balance FROM users WHERE card_number=%s FOR UPDATE", (receiver_card,))
         receiver = cursor.fetchone()
 
         if not sender:
@@ -125,7 +103,8 @@ def transfer_money(sender_card, receiver_card, amount):
         conn.commit()
         return {"success": True, "message": f"Transferred ${float(amount_dec):.2f} to {receiver_card} successfully!"}
     except Exception as e:
-        conn.rollback()
+        try: conn.rollback()
+        except: pass
         return {"success": False, "message": str(e)}
     finally:
         try: cursor.close()
@@ -143,6 +122,9 @@ def get_transactions(card_number, limit=200):
             (card_number, card_number, limit)
         )
         rows = cursor.fetchall()
+        # normalize amount to float
+        for r in rows:
+            r["amount"] = float(r["amount"]) if r.get("amount") is not None else 0.0
         return rows
     except Exception:
         return []

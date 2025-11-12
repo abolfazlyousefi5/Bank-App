@@ -69,20 +69,31 @@
     document.getElementById("transferBtn").addEventListener("click", async () => {
       const receiver = document.getElementById("receiver").value.trim();
       const amountInput = document.getElementById("amount");
-      const amount = Number(amountInput.value); // اصلاح: Number به جای parseFloat+trim
+      const amountStr = amountInput.value.trim();
       const msg = document.getElementById("transferMsg");
 
-      // اعتبارسنجی ورودی
+      // اعتبارسنجی شماره کارت گیرنده
       if (!receiver || !/^\d{16}$/.test(receiver)) {
         msg.textContent = "Receiver card must be 16 digits!";
         msg.className = "error";
         return;
       }
-      if (!amount || amount <= 0) {
-        msg.textContent = "Amount must be greater than zero!";
+
+      // اعتبارسنجی مقدار پول
+      if (!amountStr) {
+        msg.textContent = "Amount cannot be empty!";
         msg.className = "error";
         return;
       }
+
+      const amount = Number(amountStr);
+
+      if (isNaN(amount) || amount <= 0) {
+        msg.textContent = "Amount must be a positive number!";
+        msg.className = "error";
+        return;
+      }
+
       if (amount > Number(user.balance)) {
         msg.textContent = "Insufficient funds!";
         msg.className = "error";
@@ -104,10 +115,16 @@
         if (data.success) {
           msg.textContent = data.message || "Transfer successful!";
           msg.className = "success";
+
+          // بروزرسانی موجودی در سمت کلاینت
           user.balance = Number(user.balance) - Number(amount);
           localStorage.setItem("user", JSON.stringify(user));
           document.getElementById("balance").textContent = Number(user.balance).toFixed(2);
-          await loadTransactions();
+
+          // بارگذاری تراکنش‌ها
+          if (typeof loadTransactions === "function") {
+            await loadTransactions();
+          }
         } else {
           msg.textContent = data.message || "Transfer failed!";
           msg.className = "error";
@@ -118,6 +135,7 @@
         msg.className = "error";
       }
     });
+
 
     // بارگذاری تراکنش‌ها
     async function loadTransactions() {
