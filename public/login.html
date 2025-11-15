@@ -11,7 +11,10 @@
 
   <!-- Navbar -->
   <nav class="navbar">
-    <a href="index.html" class="logo">BankLogo</a>
+    <a href="index.html" class="logo">
+      <img src="image/bank-logo.png" alt="Bank Logo" class="bank-logo">
+    </a>
+
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="create_account.html">Register</a></li>
@@ -38,7 +41,7 @@
     const loginForm = document.getElementById("loginForm");
     const loginMessage = document.getElementById("loginMessage");
 
-    loginForm.addEventListener("submit", async function(e) {
+    loginForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const formData = new FormData(loginForm);
@@ -84,4 +87,5 @@
   </script>
 
 </body>
+
 </html>

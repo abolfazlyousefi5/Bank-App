@@ -5,7 +5,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins",  sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 /* ------------------------------
@@ -17,8 +17,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: "Poppins",  sans-serif;
-
+  font-family: "Poppins", sans-serif;
 }
 
 /* ------------------------------
@@ -56,6 +55,21 @@ body {
 
 .navbar ul li a:hover {
   color: #f0c330; /* طلایی */
+}
+
+/* ------------------------------
+     Logo Bank
+  --------------------------------*/
+
+.bank-logo {
+  height: 40px; /* ارتفاع استاندارد لوگو */
+  width: auto; /* جلوگیری از کشیدگی */
+  object-fit: contain;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
 }
 
 /* ------------------------------
@@ -232,7 +246,6 @@ button[type="submit"] {
   color: #ffff;
   border: 1px;
   font-weight: 700;
-
 }
 
 button[type="submit"]:hover {
@@ -492,8 +505,6 @@ button {
   }
 }
 
-
-
 .transaction-history {
   margin-top: 40px;
   width: 100%;
@@ -504,7 +515,8 @@ button {
   border-collapse: collapse;
 }
 
-.transaction-history th, .transaction-history td {
+.transaction-history th,
+.transaction-history td {
   padding: 12px;
   border-bottom: 1px solid #4a5c8f;
   text-align: left;
@@ -514,8 +526,6 @@ button {
   background-color: #2a3b6b;
   color: #f0c330;
 }
-
-
 
 /* ------------------------------
      Responsive

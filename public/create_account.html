@@ -1,15 +1,20 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Create Account</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
   <!-- Navbar -->
   <nav class="navbar">
-    <a href="index.html" class="logo">BankLogo</a>
+    <a href="index.html" class="logo">
+      <img src="image/bank-logo.png" alt="Bank Logo" class="bank-logo">
+    </a>
+
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="create_account.html">Register</a></li>
@@ -42,7 +47,7 @@
     const form = document.getElementById("registerForm");
     const resultMsg = document.getElementById("resultMessage");
 
-    form.addEventListener("submit", async function(e) {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const formData = new FormData(form);
@@ -87,7 +92,7 @@
 
         const text = await res.text();
         resultMsg.innerHTML = text;
-      } catch(err) {
+      } catch (err) {
         console.error(err);
         resultMsg.innerHTML = "<span style='color:red;'>Server error! Try again.</span>";
       }
@@ -95,4 +100,5 @@
   </script>
 
 </body>
+
 </html>
