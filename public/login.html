@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>Login</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/gif" href="image/icon.png">
 </head>
 
 <body>
@@ -38,32 +39,42 @@
   </div>
 
   <script>
+    // گرفتن فرم لاگین و المان نمایش پیام
     const loginForm = document.getElementById("loginForm");
     const loginMessage = document.getElementById("loginMessage");
-
+  
+    // رویداد ارسال فرم
     loginForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
+      e.preventDefault(); // جلوگیری از رفرش شدن صفحه
+  
+      // خواندن داده‌های فرم
       const formData = new FormData(loginForm);
       const params = new URLSearchParams();
+  
+      // تبدیل داده‌های فرم به پارامترهای POST
       for (const pair of formData) {
         params.append(pair[0], pair[1]);
       }
-
+  
       try {
+        // ارسال درخواست به سرور برای لاگین
         const res = await fetch("/login", {
           method: "POST",
           body: params
         });
-
+  
+        // اگر سرور ارور HTTP برگرداند
         if (!res.ok) {
           loginMessage.innerHTML = "<span style='color:red;'>Login failed! Server returned an error.</span>";
           return;
         }
-
+  
+        // تبدیل پاسخ JSON
         const data = await res.json();
-
+  
+        // اگر لاگین موفق بود
         if (data.success) {
+  
           // ذخیره اطلاعات کامل کاربر در localStorage
           localStorage.setItem("user", JSON.stringify({
             id: data.user.id,
@@ -72,19 +83,29 @@
             card_number: data.user.card_number,
             balance: data.user.balance
           }));
-
-          loginMessage.innerHTML = `<span style='color:green;'>Welcome ${data.user.first_name} ${data.user.last_name}!<br>Your balance: $${data.user.balance.toFixed(2)}</span>`;
-          setTimeout(() => { window.location.href = "/dashboard.html"; }, 1500);
+  
+          // نمایش پیام خوش‌آمدگویی
+          loginMessage.innerHTML =
+            `<span style='color:green;'>Welcome ${data.user.first_name} ${data.user.last_name}!<br>Your balance: $${data.user.balance.toFixed(2)}</span>`;
+  
+          // انتقال به داشبورد
+          setTimeout(() => {
+            window.location.href = "/dashboard.html";
+          }, 1500);
+  
         } else {
+          // اگر لاگین ناموفق بود (مثلاً PIN اشتباه)
           loginMessage.innerHTML = `<span style='color:red;'>${data.message}</span>`;
         }
-
+  
       } catch (err) {
+        // خطای ارتباط با سرور
         console.error(err);
         loginMessage.innerHTML = "<span style='color:red;'>Server error! Check console.</span>";
       }
     });
   </script>
+  
 
 </body>
 

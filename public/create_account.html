@@ -4,13 +4,14 @@
 <head>
   <meta charset="utf-8">
   <title>Create Account</title>
+  <link rel="icon" type="image/gif" href="image/icon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar">
+
     <a href="index.html" class="logo">
       <img src="image/bank-logo.png" alt="Bank Logo" class="bank-logo">
     </a>
@@ -29,17 +30,18 @@
     <p>Fill in details below. Server will generate a 16-digit card for you and show it after success.</p>
 
     <form id="registerForm">
+
       <input name="first_name" placeholder="First Name" required>
       <input name="last_name" placeholder="Last Name" required>
       <input name="pin" type="password" maxlength="4" pattern="\d{4}" placeholder="PIN (4 digits)" required>
-      <input name="phone" type="tel" maxlength="11" placeholder="Phone (11 digits, 09********* )" required>
+      <input name="phone" type="tel" maxlength="11" placeholder="Phone (11 digits, 09*********)" required>
       <input name="address" placeholder="Address" required>
       <input name="id_card" type="tel" maxlength="10" placeholder="ID Card (10 digits)" required>
       <button type="submit">Create Account</button>
+      
     </form>
 
     <p id="resultMessage" style="margin-top:12px;"></p>
-
     <a href="index.html" class="btn">Back to Home</a>
   </div>
 
@@ -47,10 +49,13 @@
     const form = document.getElementById("registerForm");
     const resultMsg = document.getElementById("resultMessage");
 
+    // ارسال فرم به سرور
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const formData = new FormData(form);
+
+      // گرفتن مقدار فیلدها
       const first_name = formData.get("first_name").trim();
       const last_name = formData.get("last_name").trim();
       const pin = formData.get("pin").trim();
@@ -58,24 +63,25 @@
       const address = formData.get("address").trim();
       const id_card = formData.get("id_card").trim();
 
-      // validate PIN
+      // اعتبارسنجی پین
       if (!/^\d{4}$/.test(pin)) {
         resultMsg.innerHTML = "<span style='color:red;'>PIN must be 4 digits!</span>";
         return;
       }
 
-      // validate phone
+      // اعتبارسنجی موبایل
       if (!/^09\d{9}$/.test(phone)) {
         resultMsg.innerHTML = "<span style='color:red;'>Phone must start with 09 and be 11 digits!</span>";
         return;
       }
 
-      // validate id_card
+      // اعتبارسنجی کدملی
       if (!/^\d{10}$/.test(id_card)) {
         resultMsg.innerHTML = "<span style='color:red;'>ID Card must be 10 digits!</span>";
         return;
       }
 
+      // آماده‌سازی دیتا برای ارسال
       const params = new URLSearchParams();
       params.append("first_name", first_name);
       params.append("last_name", last_name);
@@ -85,11 +91,13 @@
       params.append("id_card", id_card);
 
       try {
+        // ارسال به مسیر /register
         const res = await fetch("/register", {
           method: "POST",
           body: params
         });
 
+        // نمایش نتیجه سرور
         const text = await res.text();
         resultMsg.innerHTML = text;
       } catch (err) {
