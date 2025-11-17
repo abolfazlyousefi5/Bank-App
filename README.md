@@ -66,7 +66,7 @@ a simple **MVC-like structure**.\
 ------------------------------------------------------------------------
 ## 🔥 Preview
 
-![Preview](https://i.imgur.com/9ajFZT2.gif)
+![Preview](https://i.imgur.com/cigszbu.gif)
 
 
 
