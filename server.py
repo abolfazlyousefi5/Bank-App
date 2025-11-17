@@ -68,12 +68,77 @@ class BankHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             if success and card:
                 html = f"""
-                <html><body>
-                <h2>{message}</h2>
-                <p><strong>Your Card Number:</strong> {card}</p>
-                <p>Keep it safe. Use your card number and PIN to login.</p>
-                <p><a href='/login.html'>Login</a></p>
-                </body></html>
+                <html>
+                <head>
+                    <meta charset='UTF-8'>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background: ##1b2a49;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                            margin: 0;
+                        }}
+                        .box {{
+                            background: #2a3b6b;
+                            padding: 30px;
+                            width: 420px;
+                            border-radius: 12px;
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+                            text-align: center;
+                        }}
+                        h2 {{
+                            color: #28a745;
+                            font-size: 24px;
+                            margin-bottom: 10px;
+                        }}
+                        .card-number {{
+                            font-size: 20px;
+                            font-weight: bold;
+                            margin: 15px 0;
+                            color: #fff;
+                            background: ##1f2b50;
+                            padding: 10px;
+                            border-radius: 8px;
+                            border: 1px solid #ddd;
+                        }}
+                        p {{
+                            color: #555;
+                            font-size: 15px;
+                        }}
+                        .btn {{
+                            display: inline-block;
+                            margin-top: 20px;
+                            padding: 12px 22px;
+                            background: #007bff;
+                            color: #fff;
+                            text-decoration: none;
+                            font-size: 16px;
+                            border-radius: 8px;
+                            transition: 0.25s ease;
+                        }}
+                        .btn:hover {{
+                            background: #0056b3;
+                        }}
+                    </style>
+                </head>
+
+                <body>
+                    <div class="box">
+                        <h2>Account created successfully 🎉</h2>
+
+                        <p>Your Card Number:</p>
+                        <div class="card-number">{card}</div>
+
+                        <p>Keep it safe.  
+                        Use your card number and PIN to login.</p>
+
+                        <a href='/login.html' class='btn'>Login</a>
+                    </div>
+                </body>
+                </html>
                 """
             else:
                 html = f"<html><body><h2>{message}</h2><p><a href='/create_account.html'>Back</a></p></body></html>"
