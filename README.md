@@ -2,9 +2,9 @@
 
 ## سیستم مدیریت بانک
 
-A lightweight banking application built with **Python**, **SQLite**, and
+A lightweight banking application built with **Python**, **MySQL**, and
 a simple **MVC-like structure**.\
-یک برنامه بانکی سبک ساخته‌شده با **پایتون**، **SQLite** و یک ساختار ساده
+یک برنامه بانکی سبک ساخته‌شده با **پایتون**، **MySQL** و یک ساختار ساده
 مشابه MVC.
 
 ------------------------------------------------------------------------
@@ -40,19 +40,28 @@ a simple **MVC-like structure**.\
 ## ساختار پروژه
 
     project/
-    │── app/
+    ├── app/                  
+    │   ├── controllers/
+    |    __pycache__
+    │   │   └── AccountController.py
     │   ├── models/
+    |    __pycache__
+    │   │   ├── Database.py
     │   │   └── AccountModel.py
-    │── public/
-    │   ├── index.html
-    │   ├── login.html
-    │   ├── dashboard.html
-    │   ├── transfer.html
-    │   ├── transactions.html
+    ├── public/
     │   ├── css/
-    │   └── js/
-    │── server.py
-    │── README.md
+    │   │   └── style.css
+    |   ├──image/
+    |        └── bank-logo.png
+    |         └── icon.png     
+    │   ├── create_account.html
+    │   ├── login.html
+    │   ├── index.html
+    │   └── index.py  │
+    └── database/             
+    |   └── bank.db
+    |──server.py
+    |──README.md 
 
 ------------------------------------------------------------------------
 
@@ -91,7 +100,7 @@ a simple **MVC-like structure**.\
 ## تکنولوژی‌های استفاده شده
 
 -   Python (HTTPServer)
--   SQLite3 database
+-   MySQL database
 -   HTML, CSS, JavaScript
 -   JSON API endpoints
 
@@ -106,5 +115,5 @@ MIT --- Free to use and modify.\
 
 ## ✨ Author
 
-Created by: **Your Name**\
-ساخته شده توسط: **نام شما**
+Created by: **Abolfazl Yousefi**\
+ساخته شده توسط: **ابوالفضل یوسفی**
